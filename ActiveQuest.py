@@ -3,18 +3,18 @@ import json
 # Classes
 class ActiveSpot:
     # Represents an active spot (e.g., park, gym, home) where activities can be performed
-    def __init__(self, spot_id, name, location, spot_type, available_activities, bonus_points):
-        self.id = spot_id
+    def __init__(self, id, name, location, type, available_activities, bonus_points):
+        self.id = id
         self.name = name
         self.location = location
-        self.type = spot_type
+        self.type = type
         self.available_activities = available_activities
         self.bonus_points = bonus_points
 
 class Activity:
     # Represents an activity (e.g., soccer, yoga) that players can perform to earn points and improve stats
-    def __init__(self, activity_id, name, skill_boosts, base_points, first_time_bonus, duration):
-        self.id = activity_id
+    def __init__(self, id, name, skill_boosts, base_points, first_time_bonus, duration):
+        self.id = id
         self.name = name
         self.skill_boosts = skill_boosts
         self.base_points = base_points
@@ -23,8 +23,8 @@ class Activity:
 
 class Service:
     # Represents a service (e.g., physiotherapy, personal training) that players can purchase for benefits
-    def __init__(self, service_id, name, skill_boosts, cost, linked_active_spot_id):
-        self.id = service_id
+    def __init__(self, id, name, skill_boosts, cost, linked_active_spot_id):
+        self.id = id
         self.name = name
         self.skill_boosts = skill_boosts
         self.cost = cost
