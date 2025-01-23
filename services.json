@@ -1,0 +1,31 @@
+[
+    {
+        "id": 1,
+        "name": "Physiotherapy",
+        "skill_boosts": [
+            "\ud83d\udc22 Endurance",
+            "Health"
+        ],
+        "cost": 100,
+        "linked_active_spot_id": 1
+    },
+    {
+        "id": 2,
+        "name": "Personal Trainer",
+        "skill_boosts": [
+            "\u26a1 Speed",
+            "\ud83d\udcaa Strength"
+        ],
+        "cost": 150,
+        "linked_active_spot_id": 3
+    },
+    {
+        "id": 3,
+        "name": "Massage",
+        "skill_boosts": [
+            "Total Health Score"
+        ],
+        "cost": 80,
+        "linked_active_spot_id": 2
+    }
+]

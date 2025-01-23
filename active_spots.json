@@ -1,0 +1,36 @@
+[
+    {
+        "id": 1,
+        "name": "Lambertseter Park",
+        "location": "Lambertseter",
+        "type": "Park",
+        "available_activities": [
+            1,
+            2,
+            3
+        ],
+        "bonus_points": 50
+    },
+    {
+        "id": 2,
+        "name": "Home Gym",
+        "location": "User's Home",
+        "type": "Home",
+        "available_activities": [
+            4,
+            5
+        ],
+        "bonus_points": 10
+    },
+    {
+        "id": 3,
+        "name": "Local Crossfit Gym",
+        "location": "Main Street",
+        "type": "Gym",
+        "available_activities": [
+            6,
+            7
+        ],
+        "bonus_points": 30
+    }
+]
