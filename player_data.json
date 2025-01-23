@@ -1,0 +1,23 @@
+{
+    "name": "Gaga",
+    "age": 32,
+    "height": 170,
+    "weight": 80,
+    "visited_spots": [
+        2
+    ],
+    "completed_activities": [
+        {
+            "id": 7,
+            "name": "Weightlifting"
+        }
+    ],
+    "stats": {
+        "\u26a1 Speed": 0,
+        "\ud83d\udc22 Endurance": 0,
+        "\ud83d\udcaa Strength": 1,
+        "\ud83e\uddd8 Flexibility": 0,
+        "\u2696\ufe0f Coordination": 0
+    },
+    "total_points": 200
+}

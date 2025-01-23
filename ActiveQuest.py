@@ -1,6 +1,6 @@
 import json
 
-# Classes
+# Class for Active Spots
 class ActiveSpot:
     def __init__(self, id, name, location, type, available_activities, bonus_points):
         self.id = id
@@ -10,7 +10,7 @@ class ActiveSpot:
         self.available_activities = available_activities
         self.bonus_points = bonus_points
 
-
+# Class for Activities
 class Activity:
     def __init__(self, id, name, skill_boosts, base_points, first_time_bonus, duration):
         self.id = id
@@ -20,7 +20,7 @@ class Activity:
         self.first_time_bonus = first_time_bonus
         self.duration = duration
 
-
+# Class for Services
 class Service:
     def __init__(self, id, name, skill_boosts, cost, linked_active_spot_id):
         self.id = id
@@ -29,7 +29,7 @@ class Service:
         self.cost = cost
         self.linked_active_spot_id = linked_active_spot_id
 
-
+# Class for Player
 class Player:
     def __init__(self):
         self.name = ""
@@ -41,20 +41,31 @@ class Player:
         self.stats = {"⚡ Speed": 0, "🐢 Endurance": 0, "💪 Strength": 0, "🧘 Flexibility": 0, "⚖️ Coordination": 0}
         self.total_points = 0
 
+    # Update player stats after an activity or service
     def update_stats(self, boosts):
         for boost in boosts:
             self.stats[boost] += 1
 
+    # Edit player information
+    def edit_info(self):
+        print("\nEdit Player Information:")
+        self.name = input("Enter your name: ")
+        self.age = int(input("Enter your age: "))
+        self.height = int(input("Enter your height (in cm): "))
+        self.weight = int(input("Enter your weight (in kg): "))
+        print("Player information updated successfully!")
 
+# Main Game Class
 class Game:
     def __init__(self):
-        self.active_spots = []
-        self.activities = []
-        self.services = []
-        self.player = Player()
-        self.load_data()
-        self.create_player()
+        self.active_spots = []  # List of ActiveSpot objects
+        self.activities = []   # List of Activity objects
+        self.services = []     # List of Service objects
+        self.player = Player() # Player object
+        self.load_data()       # Load data from JSON files
+        self.create_player()   # Initialize player information
 
+    # Load active spots, activities, and services from JSON files
     def load_data(self):
         with open("active_spots.json", "r") as f:
             active_spots_data = json.load(f)
@@ -71,6 +82,7 @@ class Game:
             for service in services_data:
                 self.services.append(Service(**service))
 
+    # Save player progress to a JSON file
     def save_data(self):
         with open("player_data.json", "w") as f:
             json.dump({
@@ -84,6 +96,7 @@ class Game:
                 "total_points": self.player.total_points
             }, f, indent=4)
 
+    # Create a new player or load existing data
     def create_player(self):
         print("Welcome to ActiveQuest! Let's create your character.")
         self.player.name = input("Enter your name: ")
@@ -92,6 +105,46 @@ class Game:
         self.player.weight = int(input("Enter your weight (in kg): "))
         print(f"Character created! Welcome, {self.player.name}!")
 
+    # Display and handle the main menu
+    def main_menu(self):
+        while True:
+            print("\nMain Menu:")
+            print("1. View/Edit Player Information")
+            print("2. Visit an Active Spot")
+            print("3. Perform an Activity")
+            print("4. View Player Stats")
+            print("5. View Logs")
+            print("6. View Services")
+            print("7. Use a Service")
+            print("8. Help")
+            print("9. Exit")
+
+            choice = input("Choose an option: ")
+
+            if choice == "1":
+                self.player.edit_info()
+            elif choice == "2":
+                self.visit_active_spot()
+            elif choice == "3":
+                self.perform_activity()
+            elif choice == "4":
+                self.view_stats()
+            elif choice == "5":
+                self.view_logs()
+            elif choice == "6":
+                self.view_services()
+            elif choice == "7":
+                self.use_service()
+            elif choice == "8":
+                self.display_help()
+            elif choice == "9":
+                print("Saving progress... Goodbye!")
+                self.save_data()
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    # Visit an active spot and earn points
     def visit_active_spot(self):
         print("\nAvailable Active Spots:")
         for spot in self.active_spots:
@@ -110,6 +163,7 @@ class Game:
         else:
             print("Invalid choice. Returning to the menu.")
 
+    # Perform an activity and earn points
     def perform_activity(self):
         print("\nAvailable Activities:")
         for activity in self.activities:
@@ -132,6 +186,7 @@ class Game:
         else:
             print("Invalid choice. Returning to the menu.")
 
+    # View player stats
     def view_stats(self):
         print("\nPlayer Stats:")
         print(f"Name: {self.player.name}, Age: {self.player.age}, Height: {self.player.height} cm, Weight: {self.player.weight} kg")
@@ -139,6 +194,7 @@ class Game:
             print(f"{stat}: {value}")
         print(f"Total Points: {self.player.total_points}")
 
+    # View activity log and visited spots
     def view_logs(self):
         print("\nActivity Log:")
         for entry in self.player.completed_activities:
@@ -149,42 +205,40 @@ class Game:
             if spot:
                 print(f"- {spot.name}")
 
+    # View available services
+    def view_services(self):
+        print("\nAvailable Services:")
+        for service in self.services:
+            print(f"{service.id}. {service.name} - Cost: {service.cost} points")
+
+    # Use a service to improve stats
+    def use_service(self):
+        self.view_services()
+        choice = input("Enter the number of the service you want to use: ")
+        service = next((s for s in self.services if str(s.id) == choice), None)
+
+        if service:
+            if self.player.total_points >= service.cost:
+                self.player.total_points -= service.cost
+                self.player.update_stats(service.skill_boosts)
+                print(f"You used {service.name} and improved your stats!")
+            else:
+                print("Not enough points to use this service.")
+        else:
+            print("Invalid choice. Returning to the menu.")
+
+    # Display the help menu
     def display_help(self):
         print("\nHelp Menu:")
-        print("1. Visit an Active Spot: Go to a place to earn points for visiting.")
-        print("2. Perform an Activity: Choose and perform an activity to earn points and boost stats.")
-        print("3. View Player Stats: Check your stats, points, and character info.")
-        print("4. View Logs: See where you’ve been and what activities you’ve done.")
-        print("5. Exit: Save your progress and exit the game.")
-        print("Type 'help' at any time to see this menu again.")
-
-    def main_menu(self):
-        while True:
-            print("\nMain Menu:")
-            print("1. Visit an Active Spot")
-            print("2. Perform an Activity")
-            print("3. View Player Stats")
-            print("4. View Logs")
-            print("5. Exit")
-
-            choice = input("Choose an option (or type 'help' for commands): ")
-
-            if choice.lower() == "help":
-                self.display_help()
-            elif choice == "1":
-                self.visit_active_spot()
-            elif choice == "2":
-                self.perform_activity()
-            elif choice == "3":
-                self.view_stats()
-            elif choice == "4":
-                self.view_logs()
-            elif choice == "5":
-                print("Saving progress... Goodbye!")
-                self.save_data()
-                break
-            else:
-                print("Invalid choice. Please try again.")
+        print("1. View/Edit Player Information: Update your personal details.")
+        print("2. Visit an Active Spot: Go to a location to earn points.")
+        print("3. Perform an Activity: Complete an activity to earn points and improve stats.")
+        print("4. View Player Stats: Check your stats, total points, and personal information.")
+        print("5. View Logs: See all activities you've done and spots you've visited.")
+        print("6. View Services: List of available services and their costs.")
+        print("7. Use a Service: Spend points on a service to improve your stats.")
+        print("8. Help: View this help menu.")
+        print("9. Exit: Save your progress and exit the game.")
 
 # Start the game
 if __name__ == "__main__":
