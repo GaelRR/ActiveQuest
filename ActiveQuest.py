@@ -32,7 +32,10 @@ class Service:
 
 class Player:
     def __init__(self):
-        self.name = "Player"
+        self.name = ""
+        self.age = 0
+        self.height = 0
+        self.weight = 0
         self.visited_spots = set()
         self.completed_activities = []
         self.stats = {"⚡ Speed": 0, "🐢 Endurance": 0, "💪 Strength": 0, "🧘 Flexibility": 0, "⚖️ Coordination": 0}
@@ -50,6 +53,7 @@ class Game:
         self.services = []
         self.player = Player()
         self.load_data()
+        self.create_player()
 
     def load_data(self):
         with open("active_spots.json", "r") as f:
@@ -70,11 +74,23 @@ class Game:
     def save_data(self):
         with open("player_data.json", "w") as f:
             json.dump({
+                "name": self.player.name,
+                "age": self.player.age,
+                "height": self.player.height,
+                "weight": self.player.weight,
                 "visited_spots": list(self.player.visited_spots),
                 "completed_activities": self.player.completed_activities,
                 "stats": self.player.stats,
                 "total_points": self.player.total_points
             }, f, indent=4)
+
+    def create_player(self):
+        print("Welcome to ActiveQuest! Let's create your character.")
+        self.player.name = input("Enter your name: ")
+        self.player.age = int(input("Enter your age: "))
+        self.player.height = int(input("Enter your height (in cm): "))
+        self.player.weight = int(input("Enter your weight (in kg): "))
+        print(f"Character created! Welcome, {self.player.name}!")
 
     def visit_active_spot(self):
         print("\nAvailable Active Spots:")
@@ -118,6 +134,7 @@ class Game:
 
     def view_stats(self):
         print("\nPlayer Stats:")
+        print(f"Name: {self.player.name}, Age: {self.player.age}, Height: {self.player.height} cm, Weight: {self.player.weight} kg")
         for stat, value in self.player.stats.items():
             print(f"{stat}: {value}")
         print(f"Total Points: {self.player.total_points}")
@@ -132,6 +149,15 @@ class Game:
             if spot:
                 print(f"- {spot.name}")
 
+    def display_help(self):
+        print("\nHelp Menu:")
+        print("1. Visit an Active Spot: Go to a place to earn points for visiting.")
+        print("2. Perform an Activity: Choose and perform an activity to earn points and boost stats.")
+        print("3. View Player Stats: Check your stats, points, and character info.")
+        print("4. View Logs: See where you’ve been and what activities you’ve done.")
+        print("5. Exit: Save your progress and exit the game.")
+        print("Type 'help' at any time to see this menu again.")
+
     def main_menu(self):
         while True:
             print("\nMain Menu:")
@@ -141,9 +167,11 @@ class Game:
             print("4. View Logs")
             print("5. Exit")
 
-            choice = input("Choose an option: ")
+            choice = input("Choose an option (or type 'help' for commands): ")
 
-            if choice == "1":
+            if choice.lower() == "help":
+                self.display_help()
+            elif choice == "1":
                 self.visit_active_spot()
             elif choice == "2":
                 self.perform_activity()
