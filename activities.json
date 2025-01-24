@@ -26,7 +26,7 @@
         "name": "Yoga",
         "skill_boosts": [
             "\ud83e\uddd8 Flexibility",
-            "\u2696\ufe0f Coord"
+            "\u2696\ufe0f Coordination"
         ],
         "base_points": 60,
         "first_time_bonus": 20,
@@ -58,7 +58,7 @@
         "name": "Crossfit",
         "skill_boosts": [
             "\ud83d\udcaa Strength",
-            "\u2696\ufe0f Coord"
+            "\u2696\ufe0f Coordination"
         ],
         "base_points": 120,
         "first_time_bonus": 60,

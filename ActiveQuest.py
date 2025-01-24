@@ -44,7 +44,10 @@ class Player:
     # Update player stats after an activity or service
     def update_stats(self, boosts):
         for boost in boosts:
-            self.stats[boost] += 1
+            if boost in self.stats:
+                self.stats[boost] += 1
+            else:
+                print(f"Warning: {boost} is not a valid stat and was skipped.")
 
     # Edit player information
     def edit_info(self):
@@ -105,44 +108,13 @@ class Game:
         self.player.weight = int(input("Enter your weight (in kg): "))
         print(f"Character created! Welcome, {self.player.name}!")
 
-    # Display and handle the main menu
-    def main_menu(self):
-        while True:
-            print("\nMain Menu:")
-            print("1. View/Edit Player Information")
-            print("2. Visit an Active Spot")
-            print("3. Perform an Activity")
-            print("4. View Player Stats")
-            print("5. View Logs")
-            print("6. View Services")
-            print("7. Use a Service")
-            print("8. Help")
-            print("9. Exit")
-
-            choice = input("Choose an option: ")
-
-            if choice == "1":
-                self.player.edit_info()
-            elif choice == "2":
-                self.visit_active_spot()
-            elif choice == "3":
-                self.perform_activity()
-            elif choice == "4":
-                self.view_stats()
-            elif choice == "5":
-                self.view_logs()
-            elif choice == "6":
-                self.view_services()
-            elif choice == "7":
-                self.use_service()
-            elif choice == "8":
-                self.display_help()
-            elif choice == "9":
-                print("Saving progress... Goodbye!")
-                self.save_data()
-                break
-            else:
-                print("Invalid choice. Please try again.")
+    # Display the menu
+    def display_menu(self):
+        print("\n******************************")
+        print("1. Edit Info  2. Visit Spot  3. Activity  4. Stats")
+        print("5. Logs       6. Services    7. Use Svc   8. Help")
+        print("9. Exit")
+        print("******************************")
 
     # Visit an active spot and earn points
     def visit_active_spot(self):
@@ -230,15 +202,46 @@ class Game:
     # Display the help menu
     def display_help(self):
         print("\nHelp Menu:")
-        print("1. View/Edit Player Information: Update your personal details.")
-        print("2. Visit an Active Spot: Go to a location to earn points.")
-        print("3. Perform an Activity: Complete an activity to earn points and improve stats.")
-        print("4. View Player Stats: Check your stats, total points, and personal information.")
-        print("5. View Logs: See all activities you've done and spots you've visited.")
-        print("6. View Services: List of available services and their costs.")
-        print("7. Use a Service: Spend points on a service to improve your stats.")
+        print("1. Edit Info: Update your personal details.")
+        print("2. Visit Spot: Go to a location to earn points.")
+        print("3. Activity: Complete an activity to earn points and improve stats.")
+        print("4. Stats: Check your stats, total points, and personal information.")
+        print("5. Logs: See all activities you've done and spots you've visited.")
+        print("6. Services: List of available services and their costs.")
+        print("7. Use Svc: Spend points on a service to improve your stats.")
         print("8. Help: View this help menu.")
         print("9. Exit: Save your progress and exit the game.")
+
+    # Main game loop
+    def main_menu(self):
+        self.display_menu()
+        while True:
+            choice = input("Choose an option (type 'menu' to see options again): ")
+
+            if choice.lower() == "menu":
+                self.display_menu()
+            elif choice == "1":
+                self.player.edit_info()
+            elif choice == "2":
+                self.visit_active_spot()
+            elif choice == "3":
+                self.perform_activity()
+            elif choice == "4":
+                self.view_stats()
+            elif choice == "5":
+                self.view_logs()
+            elif choice == "6":
+                self.view_services()
+            elif choice == "7":
+                self.use_service()
+            elif choice == "8":
+                self.display_help()
+            elif choice == "9":
+                print("Saving progress... Goodbye!")
+                self.save_data()
+                break
+            else:
+                print("Invalid choice. Please try again.")
 
 # Start the game
 if __name__ == "__main__":
