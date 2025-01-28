@@ -58,13 +58,13 @@ class Player:
         self.weight = self.get_valid_int("Enter your weight (in kg): ", 10, 300)
         print("Player information updated successfully!")
 
-    # Validate name input
+    # Validate name input (allows letters and numbers)
     def get_valid_name(self, prompt):
         while True:
             name = input(prompt).strip()
-            if len(name) > 0 and name.isalpha():
+            if len(name) > 0 and name.replace(" ", "").isalnum():
                 return name
-            print("Invalid name. Please enter a valid name (letters only).")
+            print("Invalid name. Please enter a valid name (letters and numbers allowed).")
 
     # Validate integer inputs (e.g., age, height, weight)
     def get_valid_int(self, prompt, min_val, max_val):
@@ -90,20 +90,28 @@ class Game:
 
     # Load active spots, activities, and services from JSON files
     def load_data(self):
-        with open("active_spots.json", "r") as f:
-            active_spots_data = json.load(f)
-            for spot in active_spots_data:
-                self.active_spots.append(ActiveSpot(**spot))
+        try:
+            with open("active_spots.json", "r") as f:
+                active_spots_data = json.load(f)
+                for spot in active_spots_data:
+                    self.active_spots.append(ActiveSpot(**spot))
 
-        with open("activities.json", "r") as f:
-            activities_data = json.load(f)
-            for activity in activities_data:
-                self.activities.append(Activity(**activity))
+            with open("activities.json", "r") as f:
+                activities_data = json.load(f)
+                for activity in activities_data:
+                    self.activities.append(Activity(**activity))
 
-        with open("services.json", "r") as f:
-            services_data = json.load(f)
-            for service in services_data:
-                self.services.append(Service(**service))
+            with open("services.json", "r") as f:
+                services_data = json.load(f)
+                for service in services_data:
+                    self.services.append(Service(**service))
+
+        except FileNotFoundError as e:
+            print(f"Error: {e}. Make sure all required JSON files are present.")
+            exit()
+        except json.JSONDecodeError as e:
+            print(f"Error loading data from JSON files: {e}")
+            exit()
 
     # Save player progress to a JSON file
     def save_data(self):
@@ -161,6 +169,36 @@ class Game:
         except Exception as e:
             print(f"An error occurred while visiting the spot: {e}")
 
+    # Perform an activity and earn points
+    def perform_activity(self):
+        if not self.activities:
+            print("No activities available. Please check your JSON data.")
+            return
+
+        print("\nAvailable Activities:")
+        for activity in self.activities:
+            print(f"{activity.id}. {activity.name} - Base Points: {activity.base_points}, First-Time Bonus: {activity.first_time_bonus}")
+
+        choice = input("Enter the number of the activity you want to perform: ")
+
+        try:
+            activity = next((a for a in self.activities if str(a.id) == choice), None)
+            if activity:
+                first_time = activity.id not in [a["id"] for a in self.player.completed_activities]
+                points = activity.base_points + (activity.first_time_bonus if first_time else 0)
+                self.player.total_points += points
+                self.player.update_stats(activity.skill_boosts)
+                self.player.completed_activities.append({"id": activity.id, "name": activity.name})
+
+                if first_time:
+                    print(f"You performed {activity.name} for the first time! You earned {points} points!")
+                else:
+                    print(f"You performed {activity.name} and earned {points} points.")
+            else:
+                print("Invalid choice. Activity not found.")
+        except Exception as e:
+            print(f"An error occurred while performing the activity: {e}")
+
     # Main game loop
     def main_menu(self):
         self.display_menu()
@@ -189,20 +227,6 @@ class Game:
                 break
             else:
                 print("Invalid choice. Please try again.")
-
-    # Other methods (perform_activity, use_service, view_stats, etc.) remain unchanged...
-
-    # Display the help menu
-    def display_help(self):
-        print("\nHelp Menu:")
-        print("1. Visit Spot: Go to a location to earn points.")
-        print("2. Perform Activity: Complete an activity to earn points and improve stats.")
-        print("3. Use Service: Spend points on a service to improve your stats.")
-        print("4. Player Stats: Check your stats, total points, and personal information.")
-        print("5. Log: See all activities you've done and spots you've visited.")
-        print("6. Edit Info: Update your personal details.")
-        print("7. Help: View this help menu.")
-        print("8. Exit: Save your progress and exit the game.")
 
 # Start the game
 if __name__ == "__main__":
