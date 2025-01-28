@@ -1,23 +1,27 @@
 {
-    "name": "k",
-    "age": 8,
-    "height": 8,
-    "weight": 8,
+    "name": "Ga1",
+    "age": 34,
+    "height": 170,
+    "weight": 70,
     "visited_spots": [
-        2
+        3
     ],
     "completed_activities": [
         {
-            "id": 1,
-            "name": "Rock Climbing"
+            "id": 3,
+            "name": "Yoga"
+        },
+        {
+            "id": 6,
+            "name": "Crossfit"
         }
     ],
     "stats": {
         "\u26a1 Speed": 1,
-        "\ud83d\udc22 Endurance": 1,
-        "\ud83d\udcaa Strength": 0,
-        "\ud83e\uddd8 Flexibility": 0,
-        "\u2696\ufe0f Coordination": 0
+        "\ud83d\udc22 Endurance": 0,
+        "\ud83d\udcaa Strength": 2,
+        "\ud83e\uddd8 Flexibility": 1,
+        "\u2696\ufe0f Coordination": 2
     },
-    "total_points": 160
+    "total_points": 140
 }
