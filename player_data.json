@@ -1,27 +1,18 @@
 {
-    "name": "Ga1",
+    "name": "G1",
     "age": 34,
-    "height": 170,
-    "weight": 70,
+    "height": 23,
+    "weight": 23,
     "visited_spots": [
-        3
+        1
     ],
-    "completed_activities": [
-        {
-            "id": 3,
-            "name": "Yoga"
-        },
-        {
-            "id": 6,
-            "name": "Crossfit"
-        }
-    ],
+    "completed_activities": [],
     "stats": {
-        "\u26a1 Speed": 1,
+        "\u26a1 Speed": 0,
         "\ud83d\udc22 Endurance": 0,
-        "\ud83d\udcaa Strength": 2,
-        "\ud83e\uddd8 Flexibility": 1,
-        "\u2696\ufe0f Coordination": 2
+        "\ud83d\udcaa Strength": 0,
+        "\ud83e\uddd8 Flexibility": 0,
+        "\u2696\ufe0f Coordination": 0
     },
-    "total_points": 140
+    "total_points": 50
 }

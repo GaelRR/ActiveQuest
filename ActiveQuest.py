@@ -135,6 +135,32 @@ class Game:
         print("4. Player Stats  5. Log  6. Edit Info  7. Help  8. Exit")
         print("******************************")
 
+    # Visit an active spot and earn points
+    def visit_active_spot(self):
+        if not self.active_spots:
+            print("No active spots available. Please check your JSON data.")
+            return
+
+        print("\nAvailable Active Spots:")
+        for spot in self.active_spots:
+            print(f"{spot.id}. {spot.name} ({spot.type}) - Bonus Points: {spot.bonus_points}")
+
+        choice = input("Enter the number of the active spot you want to visit: ")
+
+        try:
+            spot = next((s for s in self.active_spots if str(s.id) == choice), None)
+            if spot:
+                if spot.id not in self.player.visited_spots:
+                    print(f"You visited {spot.name} for the first time! You earned {spot.bonus_points} points!")
+                    self.player.total_points += spot.bonus_points
+                    self.player.visited_spots.add(spot.id)
+                else:
+                    print(f"You revisited {spot.name}.")
+            else:
+                print("Invalid choice. Spot not found.")
+        except Exception as e:
+            print(f"An error occurred while visiting the spot: {e}")
+
     # Main game loop
     def main_menu(self):
         self.display_menu()
@@ -164,7 +190,7 @@ class Game:
             else:
                 print("Invalid choice. Please try again.")
 
-    # Other methods (visit_active_spot, perform_activity, etc.) remain unchanged
+    # Other methods (perform_activity, use_service, view_stats, etc.) remain unchanged...
 
     # Display the help menu
     def display_help(self):
