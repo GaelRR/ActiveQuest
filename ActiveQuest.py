@@ -149,28 +149,26 @@ class Game:
             print("No active spots available. Please check your JSON data.")
             return
 
-        while True:
-            print("\nAvailable Active Spots:")
-            for spot in self.active_spots:
-                print(f"{spot.id}. {spot.name} ({spot.type}) - Bonus Points: {spot.bonus_points}")
+        print("\nAvailable Active Spots:")
+        for spot in self.active_spots:
+            print(f"{spot.id}. {spot.name} ({spot.type}) - Bonus Points: {spot.bonus_points}")
 
+        while True:
             choice = input("Enter the number of the active spot you want to visit (or 'back' to return): ")
             if choice.lower() == "back":
                 return
 
-            try:
-                spot = next((s for s in self.active_spots if str(s.id) == choice), None)
-                if spot:
-                    if spot.id not in self.player.visited_spots:
-                        print(f"You visited {spot.name} for the first time! You earned {spot.bonus_points} points!")
-                        self.player.total_points += spot.bonus_points
-                        self.player.visited_spots.add(spot.id)
-                    else:
-                        print(f"You revisited {spot.name}.")
+            spot = next((s for s in self.active_spots if str(s.id) == choice), None)
+            if spot:
+                if spot.id not in self.player.visited_spots:
+                    print(f"You visited {spot.name} for the first time! You earned {spot.bonus_points} points!")
+                    self.player.total_points += spot.bonus_points
+                    self.player.visited_spots.add(spot.id)
                 else:
-                    print("Invalid choice. Spot not found.")
-            except Exception as e:
-                print(f"An error occurred while visiting the spot: {e}")
+                    print(f"You revisited {spot.name}.")
+                return  # Automatically return to main menu after visiting a spot
+            else:
+                print("Invalid choice. Spot not found. Please try again.")
 
     # Perform an activity and earn points
     def perform_activity(self):
@@ -178,32 +176,30 @@ class Game:
             print("No activities available. Please check your JSON data.")
             return
 
-        while True:
-            print("\nAvailable Activities:")
-            for activity in self.activities:
-                print(f"{activity.id}. {activity.name} - Base Points: {activity.base_points}, First-Time Bonus: {activity.first_time_bonus}")
+        print("\nAvailable Activities:")
+        for activity in self.activities:
+            print(f"{activity.id}. {activity.name} - Base Points: {activity.base_points}, First-Time Bonus: {activity.first_time_bonus}")
 
+        while True:
             choice = input("Enter the number of the activity you want to perform (or 'back' to return): ")
             if choice.lower() == "back":
                 return
 
-            try:
-                activity = next((a for a in self.activities if str(a.id) == choice), None)
-                if activity:
-                    first_time = activity.id not in [a["id"] for a in self.player.completed_activities]
-                    points = activity.base_points + (activity.first_time_bonus if first_time else 0)
-                    self.player.total_points += points
-                    self.player.update_stats(activity.skill_boosts)
-                    self.player.completed_activities.append({"id": activity.id, "name": activity.name})
+            activity = next((a for a in self.activities if str(a.id) == choice), None)
+            if activity:
+                first_time = activity.id not in [a["id"] for a in self.player.completed_activities]
+                points = activity.base_points + (activity.first_time_bonus if first_time else 0)
+                self.player.total_points += points
+                self.player.update_stats(activity.skill_boosts)
+                self.player.completed_activities.append({"id": activity.id, "name": activity.name})
 
-                    if first_time:
-                        print(f"You performed {activity.name} for the first time! You earned {points} points!")
-                    else:
-                        print(f"You performed {activity.name} and earned {points} points.")
+                if first_time:
+                    print(f"You performed {activity.name} for the first time! You earned {points} points!")
                 else:
-                    print("Invalid choice. Activity not found.")
-            except Exception as e:
-                print(f"An error occurred while performing the activity: {e}")
+                    print(f"You performed {activity.name} and earned {points} points!")
+                return  # Automatically return to main menu after completing an activity
+            else:
+                print("Invalid choice. Activity not found. Please try again.")
 
     # Use a service to improve stats
     def use_service(self):
@@ -211,28 +207,26 @@ class Game:
             print("No services available. Please check your JSON data.")
             return
 
-        while True:
-            print("\nAvailable Services:")
-            for service in self.services:
-                print(f"{service.id}. {service.name} - Cost: {service.cost} points")
+        print("\nAvailable Services:")
+        for service in self.services:
+            print(f"{service.id}. {service.name} - Cost: {service.cost} points")
 
+        while True:
             choice = input("Enter the number of the service you want to use (or 'back' to return): ")
             if choice.lower() == "back":
                 return
 
-            try:
-                service = next((s for s in self.services if str(s.id) == choice), None)
-                if service:
-                    if self.player.total_points >= service.cost:
-                        self.player.total_points -= service.cost
-                        self.player.update_stats(service.skill_boosts)
-                        print(f"You used {service.name} and improved your stats!")
-                    else:
-                        print("Not enough points to use this service.")
+            service = next((s for s in self.services if str(s.id) == choice), None)
+            if service:
+                if self.player.total_points >= service.cost:
+                    self.player.total_points -= service.cost
+                    self.player.update_stats(service.skill_boosts)
+                    print(f"You used {service.name} and improved your stats!")
                 else:
-                    print("Invalid choice. Service not found.")
-            except Exception as e:
-                print(f"An error occurred while using the service: {e}")
+                    print("Not enough points to use this service.")
+                return  # Automatically return to main menu after using a service
+            else:
+                print("Invalid choice. Service not found. Please try again.")
 
     # Display the help menu
     def display_help(self):
