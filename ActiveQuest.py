@@ -143,61 +143,31 @@ class Game:
         print("4. Player Stats  5. Log  6. Edit Info  7. Help  8. Exit")
         print("******************************")
 
-    # Visit an active spot and earn points
-    def visit_active_spot(self):
-        if not self.active_spots:
-            print("No active spots available. Please check your JSON data.")
+    # Use a service to improve stats
+    def use_service(self):
+        if not self.services:
+            print("No services available. Please check your JSON data.")
             return
 
-        print("\nAvailable Active Spots:")
-        for spot in self.active_spots:
-            print(f"{spot.id}. {spot.name} ({spot.type}) - Bonus Points: {spot.bonus_points}")
+        print("\nAvailable Services:")
+        for service in self.services:
+            print(f"{service.id}. {service.name} - Cost: {service.cost} points")
 
-        choice = input("Enter the number of the active spot you want to visit: ")
-
-        try:
-            spot = next((s for s in self.active_spots if str(s.id) == choice), None)
-            if spot:
-                if spot.id not in self.player.visited_spots:
-                    print(f"You visited {spot.name} for the first time! You earned {spot.bonus_points} points!")
-                    self.player.total_points += spot.bonus_points
-                    self.player.visited_spots.add(spot.id)
-                else:
-                    print(f"You revisited {spot.name}.")
-            else:
-                print("Invalid choice. Spot not found.")
-        except Exception as e:
-            print(f"An error occurred while visiting the spot: {e}")
-
-    # Perform an activity and earn points
-    def perform_activity(self):
-        if not self.activities:
-            print("No activities available. Please check your JSON data.")
-            return
-
-        print("\nAvailable Activities:")
-        for activity in self.activities:
-            print(f"{activity.id}. {activity.name} - Base Points: {activity.base_points}, First-Time Bonus: {activity.first_time_bonus}")
-
-        choice = input("Enter the number of the activity you want to perform: ")
+        choice = input("Enter the number of the service you want to use: ")
 
         try:
-            activity = next((a for a in self.activities if str(a.id) == choice), None)
-            if activity:
-                first_time = activity.id not in [a["id"] for a in self.player.completed_activities]
-                points = activity.base_points + (activity.first_time_bonus if first_time else 0)
-                self.player.total_points += points
-                self.player.update_stats(activity.skill_boosts)
-                self.player.completed_activities.append({"id": activity.id, "name": activity.name})
-
-                if first_time:
-                    print(f"You performed {activity.name} for the first time! You earned {points} points!")
+            service = next((s for s in self.services if str(s.id) == choice), None)
+            if service:
+                if self.player.total_points >= service.cost:
+                    self.player.total_points -= service.cost
+                    self.player.update_stats(service.skill_boosts)
+                    print(f"You used {service.name} and improved your stats!")
                 else:
-                    print(f"You performed {activity.name} and earned {points} points.")
+                    print("Not enough points to use this service.")
             else:
-                print("Invalid choice. Activity not found.")
+                print("Invalid choice. Service not found.")
         except Exception as e:
-            print(f"An error occurred while performing the activity: {e}")
+            print(f"An error occurred while using the service: {e}")
 
     # Main game loop
     def main_menu(self):
@@ -227,6 +197,18 @@ class Game:
                 break
             else:
                 print("Invalid choice. Please try again.")
+
+    # Display the help menu
+    def display_help(self):
+        print("\nHelp Menu:")
+        print("1. Visit Spot: Go to a location to earn points.")
+        print("2. Perform Activity: Complete an activity to earn points and improve stats.")
+        print("3. Use Service: Spend points on a service to improve your stats.")
+        print("4. Player Stats: Check your stats, total points, and personal information.")
+        print("5. Log: See all activities you've done and spots you've visited.")
+        print("6. Edit Info: Update your personal details.")
+        print("7. Help: View this help menu.")
+        print("8. Exit: Save your progress and exit the game.")
 
 # Start the game
 if __name__ == "__main__":
