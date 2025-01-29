@@ -38,7 +38,13 @@ class Player:
         self.weight = 0
         self.visited_spots = set()
         self.completed_activities = []
-        self.stats = {"⚡ Speed": 0, "🐢 Endurance": 0, "💪 Strength": 0, "🧘 Flexibility": 0, "⚖️ Coordination": 0}
+        self.stats = {
+            "⚡ Speed": 0,
+            "🐢 Endurance": 0,
+            "💪 Strength": 0,
+            "🧘 Flexibility": 0,
+            "⚖️ Coordination": 0
+        }
         self.total_points = 0
 
     # Update player stats after an activity or service
@@ -81,12 +87,13 @@ class Player:
 # Main Game Class
 class Game:
     def __init__(self):
-        self.active_spots = []
-        self.activities = []
-        self.services = []
-        self.player = Player()
-        self.load_data()
-        self.create_player()
+        self.active_spots = []  # List of ActiveSpot objects
+        self.activities = []   # List of Activity objects
+        self.services = []     # List of Service objects
+        self.player = Player() # Player object
+        
+        self.load_data()       # Load data from JSON files
+        self.create_player()   # Initialize player information
 
     # Load active spots, activities, and services from JSON files
     def load_data(self):
@@ -113,7 +120,7 @@ class Game:
             print(f"Error loading data from JSON files: {e}")
             exit()
 
-    # Save player progress
+    # Save player progress to a JSON file
     def save_data(self):
         with open("player_data.json", "w") as f:
             json.dump({
@@ -127,6 +134,15 @@ class Game:
                 "total_points": self.player.total_points
             }, f, indent=4)
 
+    # Create a new player
+    def create_player(self):
+        print("Welcome to ActiveQuest! Let's create your character.")
+        self.player.name = self.player.get_valid_name("Enter your name: ")
+        self.player.age = self.player.get_valid_int("Enter your age: ", 1, 120)
+        self.player.height = self.player.get_valid_int("Enter your height (in cm): ", 50, 250)
+        self.player.weight = self.player.get_valid_int("Enter your weight (in kg): ", 10, 300)
+        print(f"Character created! Welcome, {self.player.name}!")
+
     # Display the menu
     def display_menu(self):
         print("\n******************************")
@@ -134,31 +150,134 @@ class Game:
         print("4. Player Stats  5. Log  6. Edit Info  7. Help  8. Exit")
         print("******************************")
 
+    # Visit an active spot and earn points
+    def visit_active_spot(self):
+        if not self.active_spots:
+            print("No active spots available. Please check your JSON data.")
+            return
+
+        while True:
+            print("\nAvailable Active Spots:")
+            for spot in self.active_spots:
+                print(f"{spot.id}. {spot.name} ({spot.type}) - Bonus Points: {spot.bonus_points}")
+
+            choice = input("Enter the number of the active spot you want to visit (or 'back' to return): ")
+            if choice.lower() == "back":
+                return  # Go back to main menu
+
+            try:
+                spot = next((s for s in self.active_spots if str(s.id) == choice), None)
+                if spot:
+                    # First-time visit
+                    if spot.id not in self.player.visited_spots:
+                        print(f"You visited {spot.name} for the first time! You earned {spot.bonus_points} points!")
+                        self.player.total_points += spot.bonus_points
+                        self.player.visited_spots.add(spot.id)
+                    else:
+                        print(f"You revisited {spot.name}. No first-time bonus, but good consistency!")
+                    
+                    # After a successful visit, break out and return to main menu
+                    break
+                else:
+                    print("Invalid choice. Spot not found.")
+            except Exception as e:
+                print(f"An error occurred while visiting the spot: {e}")
+
+    # Perform an activity and earn points
+    def perform_activity(self):
+        if not self.activities:
+            print("No activities available. Please check your JSON data.")
+            return
+
+        while True:
+            print("\nAvailable Activities:")
+            for activity in self.activities:
+                print(f"{activity.id}. {activity.name} - Base Points: {activity.base_points}, First-Time Bonus: {activity.first_time_bonus}")
+
+            choice = input("Enter the number of the activity you want to perform (or 'back' to return): ")
+            if choice.lower() == "back":
+                return  # Go back to main menu
+
+            try:
+                activity = next((a for a in self.activities if str(a.id) == choice), None)
+                if activity:
+                    first_time = activity.id not in [a["id"] for a in self.player.completed_activities]
+                    points = activity.base_points + (activity.first_time_bonus if first_time else 0)
+                    
+                    self.player.total_points += points
+                    self.player.update_stats(activity.skill_boosts)
+                    self.player.completed_activities.append({"id": activity.id, "name": activity.name})
+
+                    if first_time:
+                        print(f"You performed {activity.name} for the first time! You earned {points} points!")
+                    else:
+                        print(f"You performed {activity.name} and earned {points} points.")
+                    
+                    # After performing an activity, break so user isn’t stuck
+                    break
+                else:
+                    print("Invalid choice. Activity not found.")
+            except Exception as e:
+                print(f"An error occurred while performing the activity: {e}")
+
+    # Use a service to improve stats
+    def use_service(self):
+        if not self.services:
+            print("No services available. Please check your JSON data.")
+            return
+
+        while True:
+            print("\nAvailable Services:")
+            for service in self.services:
+                print(f"{service.id}. {service.name} - Cost: {service.cost} points")
+
+            choice = input("Enter the number of the service you want to use (or 'back' to return): ")
+            if choice.lower() == "back":
+                return  # Go back to main menu
+
+            try:
+                service = next((s for s in self.services if str(s.id) == choice), None)
+                if service:
+                    if self.player.total_points >= service.cost:
+                        self.player.total_points -= service.cost
+                        self.player.update_stats(service.skill_boosts)
+                        print(f"You used {service.name} and improved your stats!")
+                    else:
+                        print("Not enough points to use this service.")
+                    
+                    # After using a service, break so user isn’t stuck
+                    break
+                else:
+                    print("Invalid choice. Service not found.")
+            except Exception as e:
+                print(f"An error occurred while using the service: {e}")
+
     # View player stats
     def view_stats(self):
-        print("\nPlayer Stats:")
-        print(f"Name: {self.player.name}, Age: {self.player.age}, Height: {self.player.height} cm, Weight: {self.player.weight} kg")
+        print("\n--- Player Stats ---")
+        print(f"Name: {self.player.name}")
+        print(f"Age: {self.player.age}")
+        print(f"Height: {self.player.height} cm")
+        print(f"Weight: {self.player.weight} kg")
+        print("Skill Stats:")
         for stat, value in self.player.stats.items():
-            print(f"{stat}: {value}")
+            print(f"  {stat}: {value}")
         print(f"Total Points: {self.player.total_points}")
 
-    # View logs (activities done and places visited)
+    # View logs (visited spots, completed activities)
     def view_logs(self):
-        print("\nActivity Log:")
-        if not self.player.completed_activities:
-            print("You haven't completed any activities yet.")
-        else:
-            for entry in self.player.completed_activities:
-                print(f"- {entry['name']}")
+        print("\n--- Visited Spots ---")
+        for spot_id in self.player.visited_spots:
+            # Display the spot name for clarity
+            spot_obj = next((spot for spot in self.active_spots if spot.id == spot_id), None)
+            if spot_obj:
+                print(f"  {spot_obj.name} ({spot_obj.type})")
+            else:
+                print(f"  Unknown spot with ID {spot_id}")
 
-        print("\nVisited Spots:")
-        if not self.player.visited_spots:
-            print("You haven't visited any spots yet.")
-        else:
-            for spot_id in self.player.visited_spots:
-                spot = next((s for s in self.active_spots if s.id == spot_id), None)
-                if spot:
-                    print(f"- {spot.name}")
+        print("\n--- Completed Activities ---")
+        for activity_record in self.player.completed_activities:
+            print(f"  {activity_record['name']}")
 
     # Display the help menu
     def display_help(self):
