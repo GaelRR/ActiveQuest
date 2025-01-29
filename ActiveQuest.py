@@ -81,12 +81,12 @@ class Player:
 # Main Game Class
 class Game:
     def __init__(self):
-        self.active_spots = []  
-        self.activities = []  
-        self.services = []    
-        self.player = Player()  
-        self.load_data()  
-        self.create_player()  
+        self.active_spots = []
+        self.activities = []
+        self.services = []
+        self.player = Player()
+        self.load_data()
+        self.create_player()
 
     # Load active spots, activities, and services from JSON files
     def load_data(self):
